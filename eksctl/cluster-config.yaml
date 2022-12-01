@@ -1,0 +1,87 @@
+## dbaker-daskhub-dev 
+## us-west-2
+## 1.20
+## arn:aws:kms:us-west-2:979033099169:key/39775622-d2e8-4650-9e46-3de771f5b717
+## "us-west-2b","us-west-2c"
+## "us-west-2b"
+## 2022-11 
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+    name: dbaker-daskhub-dev
+    region: us-west-2
+    version: "1.20"
+secretsEncryption:
+    keyARN: arn:aws:kms:us-west-2:979033099169:key/39775622-d2e8-4650-9e46-3de771f5b717
+
+availabilityZones: ["us-west-2b","us-west-2c"]
+
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]
+
+managedNodeGroups:
+  - name: ng-managed-ondemand
+    instanceType: t3a.medium
+    minSize: 1
+    maxSize: 1
+    desiredCapacity: 1
+    availabilityZones: ["us-west-2b"]
+    labels:
+      lifecycle: OnDemand
+    iam:
+      attachPolicyARNs:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      withAddonPolicies:
+        autoScaler: true
+        ebs: true
+        fsx: true
+        efs: true
+        cloudWatch: true
+        awsLoadBalancerController: true
+
+nodeGroups:
+  - name: ng-user-compute-spot-2022-11
+    minSize: 0
+    maxSize: 10
+    desiredCapacity: 0
+    availabilityZones: ["us-west-2b"]
+    instancesDistribution:
+      instanceTypes: ["m5.xlarge", "m5n.xlarge", "m5dn.xlarge", "m4.xlarge", "m5.2xlarge", "m5d.2xlarge", "m5dn.2xlarge", "m4.2xlarge"] 
+      onDemandBaseCapacity: 0
+      onDemandPercentageAboveBaseCapacity: 0
+      spotAllocationStrategy: lowest-price
+    labels:
+      lifecycle: Ec2Spot
+      intent: apps
+      aws.amazon.com/spot: "true"
+      node-purpose: user
+      hub.jupyter.org/node-purpose: user
+    taints:
+      hub.jupyter.org/dedicated: "user:NoSchedule"
+    tags:
+      k8s.io/cluster-autoscaler/node-template/label/lifecycle: Ec2Spot
+      k8s.io/cluster-autoscaler/node-template/label/intent: apps
+      k8s.io/cluster-autoscaler/node-template/label/node-purpose: user
+      k8s.io/cluster-autoscaler/node-template/label/hub.jupyter.org/node-purpose: user
+      k8s.io/cluster-autoscaler/node-template/taint/hub.jupyter.org/dedicated: 'user:NoSchedule'
+    iam:
+      attachPolicyARNs:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      withAddonPolicies:
+        autoScaler: true
+        ebs: true
+        fsx: true
+        efs: true
+        cloudWatch: true
+        awsLoadBalancerController: true
+
+
+

@@ -1,0 +1,32 @@
+## These are the variables that need to be edited 
+
+## <profile>                        admin   (personal)
+## <cluster-name>                   dbaker-daskhub-dev
+## <cluster-region>                 us-west-2
+## <cluster-k8s-version>            1.20
+## <cluster-kms-arn>                arn:aws:kms:us-west-2:979033099169:key/39775622-d2e8-4650-9e46-3de771f5b717
+## <cluster-az-list>                "us-west-2b","us-west-2c"
+## <cluster-az>                     "us-west-2"
+## <yyyy-mm>                        2022-11
+## <efs-endpoint-address>           fs-0799fda4aeef292f0.efs.us-west-2.amazonaws.com
+## <cognito-client-id>
+## <cognito-client-secret>
+## <eks-service-account-name>
+## <daskhub-url>                    daskhub.davidbaker.live
+## <eks-service-account-name>       dh-dbaker-daskhub-dev-role
+## <selected-domain-in-cognito>     https://dbaker-daskhub.auth.us-west-2.amazoncognito.com
+## <cluster-region>                 us-west-2
+## <cognito-auth-url>
+## <cluster-autoscaler-version>
+## <account-number>                 979033099169
+## <iam-user-name>                  admin
+## <cluster-bucket-name>            dbaker-daskhubdev
+## <default-service-account>        dh-dbaker-daskhub-dev-policy && dh-dbaker-daskhub-dev-role
+
+## <oidc-provider>                  https://oidc.eks.us-west-2.amazonaws.com/id/C99FCC00BFA9BB822829A80E2BCCD248
+
+## <Cognito-SMS>                    arn:aws:iam::979033099169:role/service-role/dbakerdaskhubdev-SMS-Role
+
+## <Pool>                           arn:aws:cognito-idp:us-west-2:979033099169:userpool/us-west-2_tTxG7y29y
+
+## <PoolID>                         us-west-2_tTxG7y29y

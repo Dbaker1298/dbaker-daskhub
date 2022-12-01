@@ -1,0 +1,234 @@
+## dh-dbaker-daskhub-dev-role
+## daskhub.davidbaker.live
+## dh-dbaker-daskhub-dev-role
+## dbaker-daskhub
+## us-west-2
+## dbaker-daskhub.auth.us-west-2.amazoncognito.com
+
+jupyterhub:
+  cull:
+    enabled: true
+    timeout: 3600
+    every: 300
+  singleuser:
+    startTimeout: 600
+    storage:
+      extraVolumes:
+        - name: efs-volume-1
+          persistentVolumeClaim:
+            claimName: efs-persist
+        - name: shm-volume
+          emptyDir:
+            medium: Memory
+      extraVolumeMounts:
+        - name: efs-volume-1
+          mountPath: /efs
+        - name: efs-volume-1
+          mountPath: /home/jovyan/efs
+        - name: shm-volume
+          mountPath: /dev/shm
+    initContainers:
+      - name: nfs-fixer
+        image: alpine:3
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - name: efs-volume-1
+          mountPath: /efs
+        command:
+        - sh
+        - -c
+        - (chmod 0775 /efs; chown :100 /efs)
+    profileList:
+    - display_name: "Small Server"
+      description: "Small notebook server. 1GB RAM/1 CPU reserved. Up to 4GB RAM/4 CPU as needed."
+      default: true
+      kubespawner_override:
+        mem_guarantee: 1G
+        mem_limit: 4G
+        cpu_guarantee: 1
+        cpu_limit: 4
+    - display_name: "Large Server"
+      description: "Large notebook server. 2GB RAM/2 CPU reserved. Up to 8GB RAM/4 CPU as needed."
+      kubespawner_override:
+        mem_guarantee: 2G
+        mem_limit: 8G
+        cpu_guarantee: 2
+        cpu_limit: 4
+    - display_name: "Extra Large Server"
+      description: "Extra Large notebook server. 16GB RAM/4 CPU reserved."
+      kubespawner_override:
+        mem_guarantee: 13G
+        mem_limit: 16G
+        cpu_guarantee: 3
+        cpu_limit: 4
+#    - display_name: "GPU Server"
+#      description: "Notebook server with access to an NVidia T4 GPU. 16GB RAM/4 CPU reserved."
+#      kubespawner_override:
+#        mem_guarantee: 13G
+#        mem_limit: 16G
+#        cpu_guarantee: 3
+#        cpu_limit: 4
+#        environment: {'NVIDIA_DRIVER_CAPABILITIES': 'compute,utility'}
+#        node_selector:
+#          nvidia.com/gpu: "true"
+#        tolerations: [{'key': 'nvidia.com/gpu','operator': 'Equal','value': 'true','effect': 'NoSchedule'},{'key': 'hub.jupyter.org/dedicated','operator': 'Equal','value': 'user','effect': 'NoSchedule'}]
+#        extra_resource_limits: {"nvidia.com/gpu": "1"}
+    image:
+      name: public.ecr.aws/smce/smce-images
+      tag: smce-dh-401
+### Run as Root so we can transition to the correct UID
+    uid: 0
+### This sets a default CPU and Memory resource request which is used by the userPlaceholder pod to simulate a user's notebook
+    cpu:
+      guarantee: 1
+      limit: 4
+    memory:
+      guarantee: 1G
+      limit: 4G
+    extraEnv:
+      DASK_GATEWAY__CLUSTER__OPTIONS__IMAGE: '{JUPYTER_IMAGE_SPEC}'
+    serviceAccountName: dh-dbaker-daskhub-dev-role
+  proxy:
+    chp:
+      nodeSelector:
+        lifecycle: OnDemand
+    https:
+      enabled: true
+      hosts:
+        - daskhub.davidbaker.live
+      letsencrypt:
+        contactEmail: dpbaker1298@gmail.com
+  hub:
+    nodeSelector:
+      lifecycle: OnDemand
+    extraConfig:
+      10-service_accounts: |
+        c.KubeSpawner.service_account = 'dh-dbaker-daskhub-dev-role'
+      20-nojovyan: |
+        from oauthenticator.generic import GenericOAuthenticator
+        class CustomGenAuthenticator(GenericOAuthenticator):
+            from tornado import gen
+            @gen.coroutine
+            def pre_spawn_start(self, user, spawner):
+                auth_state = yield user.get_auth_state()
+                self.log.info('RERL-->pre_spawn_start auth_state:%s' % auth_state)
+                if not auth_state:
+                    self.log.info('RERL-->Auth State not set to persists')
+                    return
+                spawner.environment['NB_USER'] = auth_state["oauth_user"]["username"]
+                spawner.environment['NB_UID'] = auth_state["oauth_user"]["custom:uid"]
+                spawner.environment['NB_GID'] = "100"
+        c.JupyterHub.authenticator_class = CustomGenAuthenticator
+        c.KubeSpawner.cmd = ['start-singleuser.sh']
+    #extraEnv:
+    #  EXTRA_PIP_PACKAGES: >-
+    #    boto3
+    #    dask_gatway_server
+    config:
+      Authenticator:
+        auto_login: true
+        enable_auth_state: true
+      GenericOAuthenticator:
+        ## cognito-auth-url looks like this: dbaker-daskhub.auth.<cluster-region>.amazoncognito.com
+        login_service: "AWS Cognito"
+        oauth_callback_url: https://daskhub.davidbaker.live/hub/oauth_callback
+        authorize_url: https://dbaker-daskhub.auth.us-west-2.amazoncognito.com/oauth2/authorize
+        token_url: https://dbaker-daskhub.auth.us-west-2.amazoncognito.com/oauth2/token
+        userdata_url: https://dbaker-daskhub.auth.us-west-2.amazoncognito.com/oauth2/userInfo
+        scope:
+          - openid
+          - phone
+          - profile
+          - email
+      JupyterHub:
+        authenticator_class: generic-oauth
+  prePuller:
+    extraImages:
+      alpine:
+        name: alpine
+        tag: "3"
+#    hook:
+#      enabled: false
+  scheduling:
+    podPriority:
+      enabled: true
+    userPlaceholder:
+      enabled: true
+      replicas: 0 #Check with customer - If they want a "hot standby" instance, set this to 1 (or greater)
+    userPods:
+      nodeAffinity:
+        matchNodePurpose: require
+dask-gateway:
+  gateway:
+    extraConfig:
+      optionHandler: |
+        from dask_gateway_server.options import Options, Integer, Float, String
+        def cluster_options(user):
+            def option_handler(options,user):
+                if ":" not in options.image:
+                     raise ValueError("When specifying an image you must also provide a tag")
+                extra_annotations = {
+                    "hub.jupyter.org/username": user.name,
+                }
+                extra_labels = {
+                    "hub.jupyter.org/username": user.name,
+                }
+                return {
+                    "worker_cores_limit": options.worker_cores,
+                    "worker_cores": min(options.worker_cores / 2, 1),
+                    "worker_memory": "%fG" % options.worker_memory,
+                    "image": options.image,
+                    "scheduler_extra_pod_annotations": extra_annotations,
+                    "worker_extra_pod_annotations": extra_annotations,
+                    "scheduler_extra_pod_labels": extra_labels,
+                    "worker_extra_pod_labels": extra_labels,
+                }
+            return Options(
+                 Integer("worker_cores", 2, min=1, max=16, label="Worker Cores"),
+                 Float("worker_memory", 4, min=1, max=32, label="Worker Memory (GiB)"),
+                 String("image", default="pangeo/base-notebook:latest", label="Image"),
+                 handler=option_handler,
+             )
+        c.Backend.cluster_options = cluster_options
+      idle: |
+        # timeout after 30 minutes of inactivity
+        c.KubeClusterConfig.idle_timeout = 1800
+    backend:
+      worker:
+        extraContainerConfig:
+          volumeMounts:
+          - name: efs-volume-1
+            mountPath: /home/jovyan/efs
+          - name: efs-volume-1
+            mountPath: /efs
+        extraPodConfig:
+          nodeSelector:
+            lifecycle: Ec2Spot
+          tolerations:
+          - key: "hub.jupyter.org/dedicated"
+            operator: "Equal"
+            value: "user"
+          volumes:
+          - name: efs-volume-1
+            persistentVolumeClaim:
+              claimName: efs-persist
+          serviceAccountName: dh-dbaker-daskhub-dev-role
+          automountServiceAccountToken: true
+          securityContext:
+            runAsGroup: 1000
+            runAsUser: 1000
+            fsGroup: 100
+      scheduler:
+        extraPodConfig:
+          nodeSelector:
+            lifecycle: Ec2Spot
+          tolerations:
+          - key: "hub.jupyter.org/dedicated"
+            operator: "Equal"
+            value: "user"
+          securityContext:
+            runAsGroup: 1000
+            runAsUser: 1000
+            fsGroup: 100
+

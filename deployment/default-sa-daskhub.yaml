@@ -1,0 +1,15 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    creationTimestamp: "2022-11-30T20:42:09Z"
+    name: default
+    namespace: daskhub
+    resourceVersion: "8337"
+    uid: 4a89d0f6-5aaa-4c1f-a718-e531beb2087b
+  secrets:
+  - name: default-token-cz92f
+kind: List
+metadata:
+  resourceVersion: ""
