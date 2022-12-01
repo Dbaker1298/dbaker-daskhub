@@ -148,7 +148,7 @@ jupyterhub:
                 if not auth_state:
                     #self.log.info('RERL-->Auth State not set to persists')
                     return
-                spawner.environment['DASKHUB_GIT'] = 'https://git.smce.nasa.gov/smce-administration/daskhub/climaterisk-daskhub'
+                spawner.environment['DASKHUB_GIT'] = 'https://github.com/Dbaker1298/dbaker-daskhub'
                 spawner.environment['DASKHUB_VERSION'] = "smce-dh-501-a-goofys"
 
         c.JupyterHub.authenticator_class = CustomGenAuthenticator
