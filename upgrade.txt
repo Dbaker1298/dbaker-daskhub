@@ -1,0 +1,20 @@
+##### ACTUAL UPGRADE #####
+1. First confirm that nodes match the Control Plane. 
+  a. kubectl version --short && kubectl get nodes
+2. Ensure the pod security policies are enabled.
+	a. kubectl get psp eks.privileged
+3. Check that the eksctl version is > 0.121.0
+	a. eksctl version
+4. Update the cluster-config.yaml to the next minor version of Kubernetes.
+5. eksctl upgrade cluster --config-file cluster-config.yaml  # View the "plan"
+6. eksctl upgrade cluster --config-file cluster-config.yaml --approve
+7. Update the cluster-config.yaml to change the managed & unmanaged node group name, for the upgrade. Adjust minSize & maxSize capacity numbers.
+	a. eksctl create nodegroup --config-file cluster-config.yaml
+	b. eksctl delete nodegroup --config-file=<path> --only-missing  (--approve)
+8. kubectl -n kube-system set image deployment.apps/cluster-autoscaler cluster-autoscaler=k8s.gcr.io/autoscaling/cluster-autoscaler:v1.21.2 ## update the image in the auto-scaler.yaml file and apply it.
+9. eksctl utils update-aws-node --cluster dbaker-daskhub-dev --region us-west-2
+	a. eksctl utils update-aws-node --cluster dbaker-daskhub-dev --region us-west-2 --approve
+10. eksctl utils update-kube-proxy --cluster dbaker-daskhub-dev --region us-west-2 --approve
+11. eksctl utils update-coredns --cluster dbaker-daskhub-dev --region us-west-2 --approve
+
+kubectl get pods -n kube-system

@@ -1,0 +1,19 @@
+configuration:
+  backupStorageLocation:
+    bucket: dbaker-daskhub-dev-cluster-eks-velero-backups
+  provider: aws
+  volumeSnapshotLocation:
+    config:
+      region: us-west-2
+credentials:
+  useSecret: false
+initContainers:
+- name: velero-plugin-for-aws
+  image: velero/velero-plugin-for-aws:v1.2.0
+  volumeMounts:
+  - mountPath: /target
+    name: plugins
+serviceAccount:
+  server:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::979033099169:role/eks-velero-backup"
