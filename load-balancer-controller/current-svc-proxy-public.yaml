@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    field.cattle.io/publicEndpoints: '[{"addresses":["adcf5c2d19b984030896091c15cc1dc5-1016088515.us-west-2.elb.amazonaws.com"],"port":443,"protocol":"TCP","serviceName":"daskhub:proxy-public","allNodes":false},{"addresses":["adcf5c2d19b984030896091c15cc1dc5-1016088515.us-west-2.elb.amazonaws.com"],"port":80,"protocol":"TCP","serviceName":"daskhub:proxy-public","allNodes":false}]'
+    meta.helm.sh/release-name: dhub
+    meta.helm.sh/release-namespace: daskhub
+  creationTimestamp: "2022-12-01T18:36:13Z"
+  finalizers:
+  - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app: jupyterhub
+    app.kubernetes.io/managed-by: Helm
+    chart: jupyterhub-1.2.0
+    component: proxy-public
+    heritage: Helm
+    release: dhub
+  name: proxy-public
+  namespace: daskhub
+  resourceVersion: "250471"
+  uid: dcf5c2d1-9b98-4030-8960-91c15cc1dc5c
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 10.100.209.12
+  clusterIPs:
+  - 10.100.209.12
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: https
+    nodePort: 31018
+    port: 443
+    protocol: TCP
+    targetPort: https
+  - name: http
+    nodePort: 30291
+    port: 80
+    protocol: TCP
+    targetPort: http
+  selector:
+    component: autohttps
+    release: dhub
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - hostname: adcf5c2d19b984030896091c15cc1dc5-1016088515.us-west-2.elb.amazonaws.com
