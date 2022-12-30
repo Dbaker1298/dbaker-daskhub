@@ -23,7 +23,7 @@ aws --profile admin iam create-policy \
 eksctl create iamserviceaccount \
     --profile admin --region us-west-2 \
     --name dh-dbaker-daskhub-dev-role   \
-    --role-name dh-dbaker-daskhub-dev-role
+    --role-name dh-dbaker-daskhub-dev-role \
     --namespace daskhub \
     --cluster dbaker-daskhub-dev \
     --attach-policy-arn arn:aws:iam::979033099169:policy/dh-dbaker-daskhub-dev-policy \

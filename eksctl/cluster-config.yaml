@@ -1,6 +1,6 @@
 ## dbaker-daskhub-dev 
 ## us-west-2
-## 1.20; 1.21 (12/8/2022)
+## 1.20; 1.21; 1.22
 ## arn:aws:kms:us-west-2:979033099169:key/39775622-d2e8-4650-9e46-3de771f5b717
 ## "us-west-2b","us-west-2c"
 ## "us-west-2b"
@@ -11,7 +11,7 @@ kind: ClusterConfig
 metadata:
     name: dbaker-daskhub-dev
     region: us-west-2
-    version: "1.21"
+    version: "1.22"
 secretsEncryption:
     keyARN: arn:aws:kms:us-west-2:979033099169:key/39775622-d2e8-4650-9e46-3de771f5b717
 
@@ -21,9 +21,13 @@ cloudWatch:
   clusterLogging:
     enableTypes: ["*"]
 
+iam:
+  withOIDC: true
+
 managedNodeGroups:
-  - name: ng-managed-ondemand
+  - name: ng-managed-ondemand-v1-22-pod-inc
     instanceType: t3a.medium
+    maxPodsPerNode: 80
     minSize: 1
     maxSize: 3
     desiredCapacity: 1
@@ -45,7 +49,7 @@ managedNodeGroups:
         awsLoadBalancerController: true
 
 nodeGroups:
-  - name: ng-user-compute-spot-2022-12
+  - name: ng-user-compute-spot-2022-12-v1-22
     minSize: 0
     maxSize: 10
     desiredCapacity: 0
@@ -83,5 +87,8 @@ nodeGroups:
         cloudWatch: true
         awsLoadBalancerController: true
 
-
-
+addons:
+- name: aws-ebs-csi-driver
+  version: 1.14.0
+  serviceAccountRoleARN: arn:aws:iam::979033099169:role/AmazonEKS_EBS_CSI_DriverRole 
+  resolveConflicts: overwrite

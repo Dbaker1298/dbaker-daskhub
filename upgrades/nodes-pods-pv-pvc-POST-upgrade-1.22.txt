@@ -1,0 +1,33 @@
+NAME                                                STATUS   ROLES    AGE   VERSION
+node/ip-192-168-20-216.us-west-2.compute.internal   Ready    <none>   22m   v1.22.15-eks-fb459a0
+
+NAMESPACE             NAME                                                READY   STATUS    RESTARTS   AGE
+cattle-fleet-system   pod/fleet-agent-7d6d98b485-pfkv5                    1/1     Running   0          17m
+cattle-system         pod/cattle-cluster-agent-54ff7c7f85-qlmbt           1/1     Running   0          17m
+daskhub               pod/api-dhub-dask-gateway-86867c7c95-8zq97          1/1     Running   0          17m
+daskhub               pod/autohttps-86d96bffb-fhwk6                       2/2     Running   0          17m
+daskhub               pod/controller-dhub-dask-gateway-77d9659f9f-289r7   1/1     Running   0          17m
+daskhub               pod/hub-6ccfbf4766-75bfd                            1/1     Running   0          17m
+daskhub               pod/proxy-564578cb9d-pmvxh                          1/1     Running   0          17m
+daskhub               pod/traefik-dhub-dask-gateway-75cf7dccf6-55cg7      1/1     Running   0          17m
+daskhub               pod/user-scheduler-7f6d995c5f-5qkzr                 1/1     Running   0          17m
+daskhub               pod/user-scheduler-7f6d995c5f-nlwxv                 1/1     Running   0          17m
+kube-system           pod/aws-node-nslnh                                  1/1     Running   0          3m44s
+kube-system           pod/cluster-autoscaler-5f74fb974-vshg8              1/1     Running   0          11m
+kube-system           pod/coredns-d696cc6f4-2cnnb                         1/1     Running   0          5m33s
+kube-system           pod/coredns-d696cc6f4-nxhx9                         1/1     Running   0          5m33s
+kube-system           pod/kube-proxy-tzl8g                                1/1     Running   0          115s
+
+NAMESPACE   NAME                                                        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                      STORAGECLASS   REASON   AGE
+            persistentvolume/efs-persist                                100Gi      RWX            Retain           Bound    daskhub/efs-persist                                28d
+            persistentvolume/pvc-27f2a09b-2754-49e1-bf41-deedd24a9612   10Gi       RWO            Retain           Bound    daskhub/claim-david        gp2                     27d
+            persistentvolume/pvc-3c2d56b8-723c-4e67-9111-1ea7079eab17   8Gi        RWO            Delete           Bound    ghost/data-ghost-mysql-0   gp2                     21d
+            persistentvolume/pvc-781e3d22-7ddc-4b34-be21-12023c70c46c   1Gi        RWO            Retain           Bound    daskhub/hub-db-dir         gp2                     27d
+            persistentvolume/pvc-e80850ea-b9ae-4521-a9ad-ff8885d40c41   10Gi       RWO            Delete           Bound    daskhub/claim-michael      gp2                     27d
+
+NAMESPACE   NAME                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+daskhub     persistentvolumeclaim/claim-david          Bound    pvc-27f2a09b-2754-49e1-bf41-deedd24a9612   10Gi       RWO            gp2            27d
+daskhub     persistentvolumeclaim/claim-michael        Bound    pvc-e80850ea-b9ae-4521-a9ad-ff8885d40c41   10Gi       RWO            gp2            27d
+daskhub     persistentvolumeclaim/efs-persist          Bound    efs-persist                                100Gi      RWX                           28d
+daskhub     persistentvolumeclaim/hub-db-dir           Bound    pvc-781e3d22-7ddc-4b34-be21-12023c70c46c   1Gi        RWO            gp2            27d
+ghost       persistentvolumeclaim/data-ghost-mysql-0   Bound    pvc-3c2d56b8-723c-4e67-9111-1ea7079eab17   8Gi        RWO            gp2            21d
