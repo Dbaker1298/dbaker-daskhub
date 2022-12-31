@@ -14,7 +14,6 @@ echo "Remember to verify the variables first"
 echo
 ##### UPGRADE Step Two #####
 # First upgrade the AWS EKS Control Plane, before nodes & kube-system pods
-# Currently in the `upgrades` directory.
 # Update the `../eksctl/cluster-config.yaml`. The {metadata.version} & {managedNodeGroups.maxSize}
 #eksctl upgrade cluster --config-file "../eksctl/cluster-config.yaml" --profile $PROFILE  # view the "plan"
 #eksctl upgrade cluster --config-file "../eksctl/cluster-config.yaml" --profile $PROFILE --approve  # About 12 minutes

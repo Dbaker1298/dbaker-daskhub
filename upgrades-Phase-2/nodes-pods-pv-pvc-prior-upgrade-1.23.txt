@@ -1,0 +1,42 @@
+NAME                                               STATUS   ROLES    AGE   VERSION
+node/ip-192-168-12-13.us-west-2.compute.internal   Ready    <none>   23h   v1.22.15-eks-fb459a0
+
+NAMESPACE             NAME                                                READY   STATUS    RESTARTS        AGE
+cattle-fleet-system   pod/fleet-agent-7d6d98b485-jknx9                    1/1     Running   0               23h
+cattle-system         pod/cattle-cluster-agent-54ff7c7f85-mtcvl           1/1     Running   0               23h
+daskhub               pod/api-dhub-dask-gateway-86867c7c95-l8tf5          1/1     Running   0               23h
+daskhub               pod/autohttps-86d96bffb-p7r7v                       2/2     Running   0               23h
+daskhub               pod/controller-dhub-dask-gateway-77d9659f9f-mdmjf   1/1     Running   0               23h
+daskhub               pod/hub-6ccfbf4766-8m9nx                            1/1     Running   0               23h
+daskhub               pod/proxy-564578cb9d-wpxc8                          1/1     Running   0               23h
+daskhub               pod/traefik-dhub-dask-gateway-75cf7dccf6-qc9h6      1/1     Running   0               23h
+daskhub               pod/user-scheduler-7f6d995c5f-s8sst                 1/1     Running   0               23h
+daskhub               pod/user-scheduler-7f6d995c5f-vssjb                 1/1     Running   0               23h
+kube-system           pod/aws-load-balancer-controller-7597bb7c59-bnlj5   1/1     Running   0               154m
+kube-system           pod/aws-load-balancer-controller-7597bb7c59-psk79   1/1     Running   0               154m
+kube-system           pod/aws-node-r4szd                                  1/1     Running   0               23h
+kube-system           pod/cluster-autoscaler-5f74fb974-f6x4h              1/1     Running   0               23h
+kube-system           pod/coredns-d696cc6f4-2hctv                         1/1     Running   0               23h
+kube-system           pod/coredns-d696cc6f4-828jh                         1/1     Running   0               23h
+kube-system           pod/ebs-csi-controller-58d6544c74-4zj46             6/6     Running   0               23h
+kube-system           pod/ebs-csi-controller-58d6544c74-rxz9t             6/6     Running   3 (7h38m ago)   23h
+kube-system           pod/ebs-csi-node-dts56                              3/3     Running   0               23h
+kube-system           pod/kube-proxy-cnrgb                                1/1     Running   0               23h
+kube-system           pod/snapshot-controller-5655ff978f-5hz25            1/1     Running   0               23h
+kube-system           pod/snapshot-controller-5655ff978f-xn8tg            1/1     Running   0               23h
+
+NAMESPACE   NAME                                                        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                      STORAGECLASS   REASON   AGE
+            persistentvolume/efs-persist                                100Gi      RWX            Retain           Bound    daskhub/efs-persist                                29d
+            persistentvolume/pvc-27f2a09b-2754-49e1-bf41-deedd24a9612   10Gi       RWO            Retain           Bound    daskhub/claim-david        gp2                     29d
+            persistentvolume/pvc-3c2d56b8-723c-4e67-9111-1ea7079eab17   8Gi        RWO            Delete           Bound    ghost/data-ghost-mysql-0   gp2                     22d
+            persistentvolume/pvc-781e3d22-7ddc-4b34-be21-12023c70c46c   1Gi        RWO            Retain           Bound    daskhub/hub-db-dir         gp2                     29d
+            persistentvolume/pvc-90fd9fdf-b36c-4289-986b-e52f2822ff9d   10Gi       RWO            Delete           Bound    daskhub/claim-leshanta     gp2                     7h4m
+            persistentvolume/pvc-e80850ea-b9ae-4521-a9ad-ff8885d40c41   10Gi       RWO            Delete           Bound    daskhub/claim-michael      gp2                     29d
+
+NAMESPACE   NAME                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+daskhub     persistentvolumeclaim/claim-david          Bound    pvc-27f2a09b-2754-49e1-bf41-deedd24a9612   10Gi       RWO            gp2            29d
+daskhub     persistentvolumeclaim/claim-leshanta       Bound    pvc-90fd9fdf-b36c-4289-986b-e52f2822ff9d   10Gi       RWO            gp2            7h4m
+daskhub     persistentvolumeclaim/claim-michael        Bound    pvc-e80850ea-b9ae-4521-a9ad-ff8885d40c41   10Gi       RWO            gp2            29d
+daskhub     persistentvolumeclaim/efs-persist          Bound    efs-persist                                100Gi      RWX                           29d
+daskhub     persistentvolumeclaim/hub-db-dir           Bound    pvc-781e3d22-7ddc-4b34-be21-12023c70c46c   1Gi        RWO            gp2            29d
+ghost       persistentvolumeclaim/data-ghost-mysql-0   Bound    pvc-3c2d56b8-723c-4e67-9111-1ea7079eab17   8Gi        RWO            gp2            22d

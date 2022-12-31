@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+### https://aws.amazon.com/blogs/containers/amazon-vpc-cni-increases-pods-per-node-limits/
+# bash max-pods-calculator.sh --instance-type t3a.medium --cni-version 1.11.3
+# bash max-pods-calculator.sh --instance-type t3a.medium --cni-version 1.11.3 --cni-prefix-delegation-enabled
+
 set -o pipefail
 set -o nounset
 set -o errexit

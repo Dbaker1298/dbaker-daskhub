@@ -1,6 +1,6 @@
 ## dbaker-daskhub-dev 
 ## us-west-2
-## 1.20; 1.21; 1.22
+## 1.20; 1.21; 1.22; 1.23
 ## arn:aws:kms:us-west-2:979033099169:key/39775622-d2e8-4650-9e46-3de771f5b717
 ## "us-west-2b","us-west-2c"
 ## "us-west-2b"
@@ -11,7 +11,7 @@ kind: ClusterConfig
 metadata:
     name: dbaker-daskhub-dev
     region: us-west-2
-    version: "1.22"
+    version: "1.23"
 secretsEncryption:
     keyARN: arn:aws:kms:us-west-2:979033099169:key/39775622-d2e8-4650-9e46-3de771f5b717
 
@@ -25,7 +25,7 @@ iam:
   withOIDC: true
 
 managedNodeGroups:
-  - name: ng-managed-ondemand-v1-22-pod-inc
+  - name: ng-managed-ondemand-v1-23
     instanceType: t3a.medium
     maxPodsPerNode: 80
     minSize: 1
@@ -49,7 +49,7 @@ managedNodeGroups:
         awsLoadBalancerController: true
 
 nodeGroups:
-  - name: ng-user-compute-spot-2022-12-v1-22
+  - name: ng-user-compute-spot-2022-12-v1-23
     minSize: 0
     maxSize: 10
     desiredCapacity: 0
