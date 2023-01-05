@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#https://github.com/kubernetes/autoscaler/issues/3216#issuecomment-644038135
+
 ## admin
 ## us-west-2
 ## dbaker-daskhub-dev
