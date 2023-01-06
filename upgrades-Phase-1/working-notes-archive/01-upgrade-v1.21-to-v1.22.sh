@@ -8,7 +8,7 @@ CLUSTER_NAME=dbaker-daskhub-dev
 K8S_VERSION=1.22
 
 # 1.  Log in to the respective AWS account and match it to the GitLab account.
-# 2.  Git clone the Gitlab locally and `git checkout -b upgrade-to-v1.xx`
+# 2.  Git clone the Gitlab locally and `git checkout -b upgrade-phase-1`
 # 3.  Log into the actual Daskhub instance and spin up a small server.
 # 4.  List clusters: aws eks list-clusters --region $REGION --profile $PROFILE
 # 5.  Set "update-kubeconfig" or "use-context"
