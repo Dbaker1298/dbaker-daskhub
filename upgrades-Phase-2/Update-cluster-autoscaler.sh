@@ -1,38 +1,57 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+PROFILE=admin
+REGION=us-west-2
+CLUSTER_NAME=dbaker-daskhub-dev
+ACCOUNT_NUMBER=979033099169
 
 #https://github.com/kubernetes/autoscaler/issues/3216#issuecomment-644038135
 
-## admin
-## us-west-2
-## dbaker-daskhub-dev
-## 979033099169
+confirmation() {
+
+    echo
+    echo "Have you updated the variables of this script?"
+    echo
+    while true; do
+        read -p "Are you certain that you wish to continue? " yn
+        case $yn in
+            [Yy]* ) echo "ok, we shall proceed";
+                break;;
+            [Nn]* ) echo "exiting...";
+                exit 13;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
+
+}
+
+confirmation
 
 ## DELETE Cluster Autoscaler EKS Service Account
-
-eksctl --profile admin --region us-west-2 delete iamserviceaccount \
-  --cluster=dbaker-daskhub-dev \
+eksctl --profile $PROFILE --region $REGION delete iamserviceaccount \
+  --cluster=$CLUSTER_NAME \
   --namespace=kube-system \
   --name=cluster-autoscaler 
 
 ## DELETE Cluster Autoscaler IAM Policy
 
 aws --profile admin iam delete-policy \
-    --policy-arn arn:aws:iam::979033099169:policy/k8s-asg-policy
+    --policy-arn arn:aws:iam::${ACCOUNT_NUMBER}:policy/k8s-asg-policy
 
 ## Create Cluster Autoscaler IAM Policy
 sleep 5
-aws --profile admin iam create-policy \
+aws --profile $PROFILE iam create-policy \
     --policy-name k8s-asg-policy \
     --policy-document file://cluster-autoscaler-policy.json
 
 ## Create Cluster Autoscaler EKS Service Account
 sleep 5
 
-eksctl --profile admin --region us-west-2 create iamserviceaccount \
-  --cluster=dbaker-daskhub-dev \
+eksctl --profile $PROFILE --region $REGION create iamserviceaccount \
+  --cluster=$CLUSTER_NAME \
   --namespace=kube-system \
   --name=cluster-autoscaler \
-  --attach-policy-arn=arn:aws:iam::979033099169:policy/k8s-asg-policy \
+  --attach-policy-arn=arn:aws:iam::${ACCOUNT_NUMBER}:policy/k8s-asg-policy \
   --override-existing-serviceaccounts \
   --approve
 
@@ -48,3 +67,6 @@ kubectl rollout status deploy -n kube-system cluster-autoscaler
 #    annotate deployment.apps/cluster-autoscaler \
 #    cluster-autoscaler.kubernetes.io/safe-to-evict="false"
 #
+echo 
+echo "Complete"
+confirmation

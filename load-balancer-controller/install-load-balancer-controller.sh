@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 PROFILE=admin
 REGION=us-west-2
 CLUSTER_NAME=dbaker-daskhub-dev
@@ -8,6 +10,26 @@ SA_POLICY_NAME=AWSLoadBalancerControllerIAMPolicy
 SA_NAME=aws-load-balancer-controller
 ROLE_NAME=AmazonEKSLoadBalancerControllerRole
 POLICY_ARN=arn:aws-cn:iam::979033099169:policy/AWSLoadBalancerControllerIAMPolicy
+
+confirmation() {
+
+    echo
+    echo "Have you updated the variables of this script?"
+    echo
+    while true; do
+        read -p "Are you certain that you wish to continue? " yn
+        case $yn in
+            [Yy]* ) echo "ok, we shall proceed";
+                break;;
+            [Nn]* ) echo "exiting...";
+                exit 13;;
+            * ) echo "Please answer yes or no.";;
+        esac
+    done
+
+}
+
+confirmation
 
 ## https://docs.amazonaws.cn/en_us/eks/latest/userguide/aws-load-balancer-controller.html
 ## curl -o load-balancer-controller-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.5/docs/install/iam_policy.json

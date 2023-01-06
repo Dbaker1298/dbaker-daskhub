@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-
 # Update variables first
 
 PROFILE=admin
@@ -10,9 +8,25 @@ CLUSTER_NAME=dbaker-daskhub-dev
 DATE="$(date +%Y-%m)"
 K8S_VERSION=1.24
 
+command-exists() {
+
+  # Check if we have the required commands and fail otherwise
+  command -v "$1" >/dev/null 2>&1
+  if [[ $? -ne 0 ]]; then 
+    echo "I require $1 but it is not installed. Exiting..."
+    exit 1
+  fi
+
+}
+
 pre-flight-check() {
 
+    for COMMAND in "kubectl" "helm" "aws" "eksctl"; do
+      command-exists "${COMMAND}"
+    done
+
     date
+    date > nodes-pods-pv-pvc-prior-upgrade-${K8S_VERSION}.txt
     echo
     # Confirm that the nodes match the Control Plane
     echo "++++++++++++++++++++++++++++++++++++++"
@@ -30,7 +44,7 @@ pre-flight-check() {
     echo
 
     # Check Nodes, Pods, PVs, and PVCs
-    kubectl get nodes,pods,pv,pvc -A && kubectl get nodes,pods,pv,pvc -A > nodes-pods-pv-pvc-prior-upgrade-${K8S_VERSION}.txt
+    kubectl get nodes,pods,pv,pvc -A && kubectl get nodes,pods,pv,pvc -A >> nodes-pods-pv-pvc-prior-upgrade-${K8S_VERSION}.txt
 
     echo
     echo "=================================================================="
