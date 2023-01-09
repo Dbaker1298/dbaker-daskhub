@@ -13,6 +13,7 @@ Phase 2 of our upgrade path to EKS Kubernetes v1.24 is to first add and update s
 - Upgrade to v1.24
 
 ## Steps
+0. Review the steps and first update the variables in all 5 files. 
 1. Update the variables inside `convert-vpc-cni-to-helm.sh` of `../vpc-cni-addon/` and execute that script.
 2. Update the variables inside `install-csi-addon.sh` of `../ebs-csi-driver/` and execute that script.
 3. Update the variables of `install-load-balancer-controller.sh` of `../load-balancer-controller/` and execute that script.
@@ -28,6 +29,8 @@ Phase 2 of our upgrade path to EKS Kubernetes v1.24 is to first add and update s
 [K8s External Snapshotter](https://github.com/kubernetes-csi/external-snapshotter#usage)
 [AWS EBS CSI Driver add-on](https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html)
 [AWS Load Balancer Controller](https://docs.amazonaws.cn/en_us/eks/latest/userguide/aws-load-balancer-controller.html)
+[Cluster Autoscaler Issue](https://github.com/kubernetes/autoscaler/issues/3216#issuecomment-644038135)
+[eksctl Cluster Upgrades](https://eksctl.io/usage/cluster-upgrade/)
 
 
 
