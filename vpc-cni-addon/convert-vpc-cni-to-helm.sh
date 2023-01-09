@@ -6,12 +6,12 @@
 
 # Update the variables
 
-PROFILE=admin
-REGION=us-west-2
-CLUSTER_NAME=dbaker-daskhub-dev
+PROFILE=
+REGION=
+CLUSTER_NAME=
 DATE="$(date +%Y-%m)"
-K8S_VERSION="1-24"
-ACCOUNT_NUMBER=979033099169
+K8S_VERSION="1-23"
+ACCOUNT_NUMBER=
 
 # The current recommended Add-on version is 1.12.0-eksbuild.1
 
@@ -75,11 +75,23 @@ annotate-and-label() {
   kubectl get daemonset aws-node -n kube-system -o yaml > aws-k8s-cni-old.yaml
   set -e 
   # Annotate resources to be managed by Helm
+
+  echo
+  echo "Annotating the resources instead of deleting and installing from zero..."
+  echo
+  sleep 3
+
   ./helm-cni.sh
+
+  confirmation
 
 }
 
 helm-upgrade-install() {
+
+  echo
+  echo "Helm installing the aws-vpc-cni now..."
+  sleep 2
 
   helm install  aws-vpc-cni eks/aws-vpc-cni \
     --namespace kube-system \
@@ -100,7 +112,9 @@ downtime
 determine-if-eks-or-selfmanaged-add-on
 annotate-and-label
 helm-upgrade-install
+
 echo
-echo "************************"
+echo "*******************************"
 echo "The script has completed"
-echo "************************"
+echo "Proceed to Step 2 of README.md."
+echo "*******************************"

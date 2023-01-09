@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 
+set -e
+
 # Update the variables
 
-PROFILE=admin
-REGION=us-west-2
-CLUSTER_NAME=dbaker-daskhub-dev
-K8S_VERSION="1-22"
-ACCOUNT_NUMBER=979033099169
+PROFILE=
+REGION=
+CLUSTER_NAME=
+K8S_VERSION="1-23"
+ACCOUNT_NUMBER=
 SA_POLICY_NAME=ebs-csi-controller-policy
 SA_NAME=ebs-csi-controller-sa
 ROLE_NAME=AmazonEKS_EBS_CSI_DriverRole
@@ -25,6 +27,21 @@ confirmation() {
       esac
   done
   echo
+
+}
+
+backup-cluster-config() {
+  echo
+  echo "Backing up the ../eksctl/cluster-config.yaml"
+  
+  cp ../eksctl/cluster-config.yaml ../eksctl/cluster-config.yaml.backup.$(date +%F_%R)
+
+  ls -ltr ../eksctl
+
+  echo 
+  echo "Is the backup file in place?"
+  
+  confirmation
 
 }
 
@@ -66,11 +83,71 @@ install-csi-snapshotter() {
 
 }
 
+add-the-addon() {
+
+  echo
+  echo "Appending to the ../eksctl/cluster-config.yaml to include the CSI add-on."
+
+  cat << EoF >> ../eksctl/cluster-config.yaml
+
+addons:
+- name: aws-ebs-csi-driver
+  version: 1.14.0
+  serviceAccountRoleARN: arn:aws:iam::${ACCOUNT_NUMBER}:role/AmazonEKS_EBS_CSI_DriverRole
+  resolveConflicts: overwrite
+EoF
+  ## Get the default version with `aws eks describe-addon-versions --addon-name aws-ebs-csi-driver | less`
+  ## for the respective K8s Version
+
+  #addons:
+  #- name: aws-ebs-csi-driver
+  #  version: 1.14.0
+  #  attachPolicyARNs:
+  #  - arn:aws:iam::${ACCOUNT_NUMBER}policy/ebs-csi-controller-policy
+  #  resolveConflicts: overwrite
+
+  tail -20 ../eksctl/cluster-config.yaml
+
+  echo "Does the file look correct?"
+
+  confirmation
+
+}
+
+install-csi-add-on() {
+
+  echo "Installing the CSI addon now..."
+
+  eksctl create addon --profile $PROFILE -f ../eksctl/cluster-config.yaml -v 4
+
+  echo "Replacing the default storage class..."
+  
+  sleep 5
+
+  kubectl replace -f ./storageclass.yaml --force
+
+  kubectl describe storageclass
+
+  echo
+  echo "Looking for 'Provisioner: kubernetes.io/ebs.csi.aws.com' "
+  echo
+  
+}
 
 echo 
 echo "====>  Have you updated the variables of this script?"
 echo
+
+backup-cluster-config
 confirmation
 service-account-ebs-csi
 confirmation
 install-csi-snapshotter
+add-the-addon
+install-csi-add-on
+
+echo
+echo "*******************************"
+echo "The script has completed"
+echo "Proceed to Step 3 of README.md."
+echo "*******************************"

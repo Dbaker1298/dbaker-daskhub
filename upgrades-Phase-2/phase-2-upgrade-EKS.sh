@@ -2,11 +2,11 @@
 
 # Update variables first
 
-PROFILE=admin
-REGION=us-west-2
-CLUSTER_NAME=dbaker-daskhub-dev
+PROFILE=
+REGION=
+CLUSTER_NAME=
 DATE="$(date +%Y-%m)"
-K8S_VERSION=1.24
+K8S_VERSION=1.23
 
 command-exists() {
 
@@ -56,6 +56,8 @@ pre-flight-check() {
     echo
     echo "This output of \`kubectl get nodes,pods,pv,pvc -A\` has been saved to a file named:  nodes-pods-pv-pvc-prior-upgrade-${K8S_VERSION}.txt"
     echo
+    echo "     *********** Did you update the variables? *************"
+    echo "     ******** Do you have a second terminal open? **********"
 
 }
 
@@ -73,6 +75,21 @@ confirmation() {
             * ) echo "Please answer yes or no.";;
         esac
     done
+
+}
+
+backup-cluster-config() {
+  echo
+  echo "Backing up the ../eksctl/cluster-config.yaml"
+
+  cp ../eksctl/cluster-config.yaml ../eksctl/cluster-config.yaml.backup.$(date +%F_%R)
+
+  ls -ltr ../eksctl
+
+  echo
+  echo "Is the backup file in place?"
+
+  confirmation
 
 }
 
@@ -130,7 +147,7 @@ upgrade-both-node-groups() {
 
 update-cluster-autoscaler-image() {
 
-    echo "Update the ../kubectl/cluster-autoscaler.yaml to the correct version: v1.20.3 ; v1.21.2 ; v1.22.2 ; v1.23.0 ; v1.24.0"
+    echo "Update the ../kubectl/cluster-autoscaler.yaml to the correct version:  v1.23.0 or v1.24.0"
     
     confirmation
     
@@ -153,6 +170,7 @@ update-coredns-kube-proxy() {
     echo
     echo "We are updating the utils: kube-proxy, and coredns."
     echo "We may need to edit some manifests at this stage..."
+    echo ""
 
     # Upgrade the `eksctl utils`; kube-proxy, coredns
 
@@ -184,6 +202,7 @@ update-coredns-kube-proxy() {
 
 pre-flight-check
 confirmation
+backup-cluster-config
 upgrade-control-plane
 upgrade-both-node-groups
 update-cluster-autoscaler-image
