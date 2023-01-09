@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-PROFILE=admin
-REGION=us-west-2
-CLUSTER_NAME=dbaker-daskhub-dev
-ACCOUNT_NUMBER=979033099169
+PROFILE=
+REGION=
+CLUSTER_NAME=
+ACCOUNT_NUMBER=
 
 #https://github.com/kubernetes/autoscaler/issues/3216#issuecomment-644038135
 
@@ -35,7 +35,7 @@ eksctl --profile $PROFILE --region $REGION delete iamserviceaccount \
 
 ## DELETE Cluster Autoscaler IAM Policy
 
-aws --profile admin iam delete-policy \
+aws --profile $PROFILE iam delete-policy \
     --policy-arn arn:aws:iam::${ACCOUNT_NUMBER}:policy/k8s-asg-policy
 
 ## Create Cluster Autoscaler IAM Policy
@@ -58,6 +58,7 @@ eksctl --profile $PROFILE --region $REGION create iamserviceaccount \
 ## Deploy Cluster Autoscaler
 sleep 5
 kubectl apply -f ../kubectl/cluster-autoscaler.yaml
+
 kubectl rollout restart deploy -n kube-system cluster-autoscaler && \
 kubectl rollout status deploy -n kube-system cluster-autoscaler
 
@@ -67,6 +68,9 @@ kubectl rollout status deploy -n kube-system cluster-autoscaler
 #    annotate deployment.apps/cluster-autoscaler \
 #    cluster-autoscaler.kubernetes.io/safe-to-evict="false"
 #
-echo 
-echo "Complete"
-confirmation
+echo
+echo "*******************************"
+echo "The script has completed"
+echo "Proceed to Step 5 of README.md."
+echo "*******************************"
+

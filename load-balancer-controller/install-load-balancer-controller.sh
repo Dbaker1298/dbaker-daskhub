@@ -2,14 +2,14 @@
 
 set -euo pipefail
 
-PROFILE=admin
-REGION=us-west-2
-CLUSTER_NAME=dbaker-daskhub-dev
-ACCOUNT_NUMBER=979033099169
+PROFILE=
+REGION=
+CLUSTER_NAME=
+ACCOUNT_NUMBER=
 SA_POLICY_NAME=AWSLoadBalancerControllerIAMPolicy
 SA_NAME=aws-load-balancer-controller
 ROLE_NAME=AmazonEKSLoadBalancerControllerRole
-POLICY_ARN=arn:aws-cn:iam::979033099169:policy/AWSLoadBalancerControllerIAMPolicy
+POLICY_ARN=arn:aws-cn:iam::${ACCOUNT_NUMBER}:policy/AWSLoadBalancerControllerIAMPolicy
 
 confirmation() {
 
@@ -74,3 +74,10 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
 sleep 30
 
 kubectl get deployment -n kube-system aws-load-balancer-controller
+
+echo
+echo "*******************************"
+echo "The script has completed"
+echo "Proceed to Step 4 of README.md."
+echo "*******************************"
+
