@@ -7,10 +7,10 @@
 
 ##### These values will need be MANUALLY updated within this values.yaml ####
 #TAG: v1.12.0
-#REGION=us-west-2
-#CLUSTER_NAME=dbaker-daskhub-dev
-#K8S_VERSION="1-24"
-#ACCOUNT_NUMBER=979033099169 ==> For the ServiceAccount annotation at the bottom 
+#REGION=  ==> For the eniConfig at the bottom
+#CLUSTER_NAME=
+#K8S_VERSION=""
+#ACCOUNT_NUMBER= ==> For the ServiceAccount annotation at the bottom 
 
 nameOverride: aws-node
 
@@ -101,7 +101,7 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name:
   annotations: 
-    eks.amazonaws.com/role-arn: arn:aws:iam::979033099169:role/AmazonEKSVPCCNIRole
+    eks.amazonaws.com/role-arn: arn:aws:iam::${ACCOUNT_NUMBER}:role/AmazonEKSVPCCNIRole
     # To set annotations - serviceAccount.annotations."eks\.amazonaws\.com/role-arn"=arn:aws:iam::<AWS_ACCOUNT_ID>:<IAM_ROLE_NAME>
 
 livenessProbe:
@@ -161,7 +161,7 @@ affinity:
 eniConfig:
   # Specifies whether ENIConfigs should be created
   create: false
-  region: us-west-2
+  region: $REGION
   subnets:
     # Key identifies the AZ
     # Value contains the subnet ID and security group IDs within that AZ

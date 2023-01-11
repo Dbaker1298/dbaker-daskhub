@@ -36,4 +36,5 @@ Phase 2 of our upgrade path to EKS Kubernetes v1.24 is to first add and update s
 
 ## Next Steps
 After Phase 2, we will transition into a Regular Upgrade Cadence to stay current with the AWS EKS Kubernetes release calendar. With a regular Upgrade Cadence, we will not have as many steps and modifications at one time.
+In short, we plan to upgrade AWS EKS clusters twice a year.
 [EKS Kubernetes Release Calendar](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar)
